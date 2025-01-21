@@ -1,5 +1,5 @@
 const express = require("express");
-const { followUser } = require("../controllers/follow");
+const { followUser } = require("../controllers/followController");
 
 const authMiddleware = require("../middleware/auth");
 

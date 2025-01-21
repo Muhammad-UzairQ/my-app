@@ -1,9 +1,9 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const bodyParser = require("body-parser");
-const authRoutes = require("./routes/auth");
-const videoRoutes = require("./routes/video");
-const followRoutes = require("./routes/follow");
+const authRoutes = require("./routes/authRoutes");
+const videoRoutes = require("./routes/videoRoutes");
+const followRoutes = require("./routes/followRoutes");
 
 dotenv.config();
 

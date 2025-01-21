@@ -1,5 +1,5 @@
 const express = require("express");
-const { saveVideo, getVideos } = require("../controllers/video");
+const { saveVideo, getVideos } = require("../controllers/videoController");
 
 const authMiddleware = require("../middleware/auth");
 
