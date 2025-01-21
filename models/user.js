@@ -7,9 +7,21 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          isIn: [["admin", "user"]], // Sequelize validation to enforce specific values
+        },
       },
     },
     {
