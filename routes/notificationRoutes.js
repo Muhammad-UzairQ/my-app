@@ -8,8 +8,8 @@ const {
 
 const authMiddleware = require("../middleware/auth");
 
-router.get("/", authMiddleware, getNotifications); // Admin gets notifications
-router.patch("/:notificationId/reject", authMiddleware, rejectNotifications); // Admin rejects a notification
-router.patch("/:notificationId/approve", authMiddleware, approveNotifications); // Admin approves a notification
+router.get("/", authMiddleware, getNotifications);
+router.patch("/:notificationId/reject", authMiddleware, rejectNotifications);
+router.patch("/:notificationId/approve", authMiddleware, approveNotifications);
 
 module.exports = router;

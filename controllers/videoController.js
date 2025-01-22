@@ -1,15 +1,15 @@
 const videoService = require("../services/videoService");
+const CustomError = require("../utils/customError");
+const errorMessages = require("../constants/errorMessages");
 
 const saveVideo = async (req, res) => {
   try {
     const { title, description, url, source, isPublic } = req.body;
 
-    // Ensure the user is an admin
     if (!req.user || req.user.role !== "admin") {
-      return res.status(403).json({ message: "Only admins can save videos." });
+      throw new CustomError(403, errorMessages.ONLY_ADMINS_CAN_SAVE_VIDEOS);
     }
 
-    // Call the service to save the video
     const newVideo = await videoService.saveVideo({
       title,
       description,
@@ -24,26 +24,36 @@ const saveVideo = async (req, res) => {
       video: newVideo,
     });
   } catch (error) {
-    console.error("Error saving video:", error);
-    return res.status(500).json({ message: error.message });
+    console.error("Error saving video:", error.message);
+
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
+    return res
+      .status(500)
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
   }
 };
 
 const getVideos = async (req, res) => {
   try {
-    // Extract adminId from request params (optional)
     const { adminId } = req.params;
-
-    // Extract userId and role from the JWT token
     const { id: userId, role } = req.user;
 
-    // Call the service to fetch videos
     const videos = await videoService.getVideos({ adminId, userId, role });
 
     return res.status(200).json({ videos });
   } catch (error) {
-    console.error("Error fetching videos:", error);
-    return res.status(500).json({ message: error.message });
+    console.error("Error fetching videos:", error.message);
+
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
+    return res
+      .status(500)
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
   }
 };
 

@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/video", videoRoutes);
-app.use("/follow", followRoutes);
+app.use("", followRoutes);
 app.use("/notifications", notificationRoutes);
 
 // Export the app instance

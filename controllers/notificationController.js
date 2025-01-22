@@ -1,9 +1,9 @@
+const CustomError = require("../utils/customError");
 const notificationService = require("../services/notificationService");
 
-// Approve a notification by admin
 const approveNotifications = async (req, res) => {
-  const { notificationId } = req.params; // Get notification ID from request params
-  const { id: adminId, role } = req.user; // Assuming `req.user.id` is the authenticated admin's ID
+  const { notificationId } = req.params;
+  const { id: adminId, role } = req.user;
 
   if (role !== "admin") {
     return res
@@ -12,30 +12,31 @@ const approveNotifications = async (req, res) => {
   }
 
   try {
-    // Call service to approve the notification
     const result = await notificationService.approveNotification(
       notificationId,
       adminId
     );
 
     if (!result) {
-      return res.status(404).json({ message: "Notification not found" });
+      throw new CustomError("Notification not found", 404);
     }
 
     return res
       .status(200)
       .json({ message: "Notification approved successfully" });
   } catch (error) {
-    console.error("Error approving notification:", error);
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
     return res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
   }
 };
 
 const rejectNotifications = async (req, res) => {
-  const { notificationId } = req.params; // Get notification ID from request params
-  const { id: adminId, role } = req.user; // Assuming `req.user.id` is the authenticated admin's ID
+  const { notificationId } = req.params;
+  const { id: adminId, role } = req.user;
 
   if (role !== "admin") {
     return res
@@ -44,32 +45,31 @@ const rejectNotifications = async (req, res) => {
   }
 
   try {
-    // Call service to reject the notification
     const result = await notificationService.rejectNotification(
       notificationId,
       adminId
     );
 
     if (!result) {
-      return res.status(404).json({ message: "Notification not found" });
+      throw new CustomError("Notification not found", 404);
     }
 
     return res
       .status(200)
       .json({ message: "Notification rejected successfully" });
   } catch (error) {
-    console.error("Error rejecting notification:", error);
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
     return res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
   }
 };
 
-// Get all notifications for an admin
 const getNotifications = async (req, res) => {
-  const { id: adminId, role } = req.user; // Get user ID and role from the authenticated user
+  const { id: adminId, role } = req.user;
 
-  // Check if the user is an admin
   if (role !== "admin") {
     return res
       .status(403)
@@ -77,15 +77,16 @@ const getNotifications = async (req, res) => {
   }
 
   try {
-    // Call service to get notifications for the admin
     const notifications = await notificationService.getNotifications(adminId);
 
     return res.status(200).json({ notifications });
   } catch (error) {
-    console.error("Error fetching notifications:", error);
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
     return res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
   }
 };
 
