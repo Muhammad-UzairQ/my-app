@@ -1,6 +1,9 @@
 const { Video, Follow, User } = require("../models");
+const csv = require("csv-parser");
+const fs = require("fs");
 const CustomError = require("../utils/customError");
 const errorMessages = require("../constants/errorMessages");
+const { publishVideoTask } = require("../queues/producers/videoProducer");
 
 const saveVideo = async ({
   title,
@@ -31,6 +34,16 @@ const saveVideo = async ({
     source,
     isPublic: isPublic !== undefined ? isPublic : true,
     adminId,
+  });
+
+  await publishVideoTask({
+    type: "SAVE_VIDEO",
+    data: {
+      id: newVideo.id,
+      title: newVideo.title,
+      url: newVideo.url,
+      source: newVideo.source,
+    },
   });
 
   return newVideo;
@@ -75,4 +88,54 @@ const getVideos = async ({ adminId, userId, role }) => {
   });
 };
 
-module.exports = { saveVideo, getVideos };
+const parseCSVFile = async (filePath, adminId) => {
+  const validSources = ["facebook", "instagram"];
+  const results = [];
+  const errors = [];
+
+  await new Promise((resolve, reject) => {
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on("headers", (headers) => {
+        console.log("Headers:", headers); // Log the headers to verify
+      })
+      .on("data", (row) => {
+        const { title, description, url, source, isPublic } = row;
+
+        // Validate the required fields and valid sources
+        if (!title || !url || !source || !validSources.includes(source)) {
+          errors.push({ row, error: "Invalid or missing required fields." });
+          return;
+        }
+
+        results.push({
+          title,
+          description: description || null,
+          url,
+          source,
+          isPublic: isPublic === "true",
+          adminId,
+        });
+      })
+      .on("end", resolve)
+      .on("error", reject);
+  });
+
+  // Delete the file after processing
+  fs.unlinkSync(filePath);
+
+  return { results, errors };
+};
+
+const bulkInsertVideos = async ({ filePath, adminId }) => {
+  const { results, errors } = await parseCSVFile(filePath, adminId);
+
+  // Perform bulk insert for valid rows
+  if (results.length > 0) {
+    await Video.bulkCreate(results);
+  }
+
+  return { inserted: results.length, errors };
+};
+
+module.exports = { saveVideo, getVideos, bulkInsertVideos };

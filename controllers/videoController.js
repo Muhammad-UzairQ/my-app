@@ -1,6 +1,8 @@
 const videoService = require("../services/videoService");
 const CustomError = require("../utils/customError");
 const errorMessages = require("../constants/errorMessages");
+const { publishVideoTask } = require("../queues/producers/videoProducer");
+const { BULK_INSERT_VIDEOS } = require("../queues/queueNames");
 
 const saveVideo = async (req, res) => {
   try {
@@ -57,4 +59,37 @@ const getVideos = async (req, res) => {
   }
 };
 
-module.exports = { saveVideo, getVideos };
+const bulkInsertVideos = async (req, res) => {
+  try {
+    // Check if the file is uploaded
+    if (!req.file) {
+      throw new CustomError(400, errorMessages.NO_FILE_UPLOADED);
+    }
+
+    const filePath = req.file.path; // File path for the uploaded CSV
+    const adminId = req.user.id; // Admin ID from the authenticated user
+
+    // Publish the bulk insert task to RabbitMQ
+    await publishVideoTask(BULK_INSERT_VIDEOS, {
+      type: "BULK_INSERT_VIDEOS",
+      data: { filePath, adminId },
+    });
+
+    return res.status(202).json({
+      message:
+        "File uploaded successfully. Bulk insert processing has started.",
+    });
+  } catch (error) {
+    console.error("Error in bulk insert controller:", error.message);
+
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
+    return res
+      .status(500)
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
+  }
+};
+
+module.exports = { saveVideo, getVideos, bulkInsertVideos };

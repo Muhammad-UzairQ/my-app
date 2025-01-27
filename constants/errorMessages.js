@@ -11,4 +11,5 @@ module.exports = {
   NOTIFICATION_ALREADY_PROCESSED: "Notification already processed",
   NO_PENDINING_NOTIFICATION: "No pending notifications found",
   INTERNAL_SERVER_ERROR: "Internal server error",
+  NO_FILE_UPLOADED: "No file uploaded",
 };
