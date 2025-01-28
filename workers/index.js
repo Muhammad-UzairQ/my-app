@@ -1,1 +1,1 @@
-require("./cronJobs/notificationJobs");
+require("./cronJobs/cronJobs");

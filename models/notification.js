@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: "CASCADE",
       },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
       status: {
         type: DataTypes.STRING,
         allowNull: false,

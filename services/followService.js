@@ -26,6 +26,7 @@ const followUser = async (userId, adminId) => {
     userId,
     adminId,
     status: "pending",
+    email: admin.email,
   });
 
   return notification;
