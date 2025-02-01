@@ -1,26 +1,5 @@
+const app = require("../../app");
 const request = require("supertest");
-const { sequelize } = require("../../models");
-const app = require("../../app"); // Assuming you export the app instance
-const cron = require("node-cron");
-
-jest.mock("node-cron", () => {
-  const originalModule = jest.requireActual("node-cron");
-  return {
-    ...originalModule,
-    schedule: jest.fn(),
-    getTasks: jest.fn(() => []), // Mocking getTasks to return an empty array
-  };
-});
-
-beforeAll(async () => {
-  await sequelize.authenticate();
-  console.log("Connected to the database successfully!");
-});
-
-afterAll(async () => {
-  await sequelize.close();
-  cron.getTasks().forEach((task) => task.stop());
-});
 
 describe("Login API Tests", () => {
   it("should login successfully with valid credentials", async () => {

@@ -1,35 +1,14 @@
+const app = require("../../app");
 const request = require("supertest");
-const { sequelize } = require("../../models");
-const app = require("../../app"); // Assuming you export the app instance
-const cron = require("node-cron");
 
 let userToken = "";
 let adminToken = "";
-
-jest.mock("node-cron", () => {
-  const originalModule = jest.requireActual("node-cron");
-  return {
-    ...originalModule,
-    schedule: jest.fn(),
-    getTasks: jest.fn(() => []), // Mocking getTasks to return an empty array
-  };
-});
-
-beforeAll(async () => {
-  await sequelize.authenticate();
-  console.log("Connected to the database successfully!");
-});
-
-afterAll(async () => {
-  await sequelize.close();
-  cron.getTasks().forEach((task) => task.stop());
-});
 
 describe("Follow API Tests", () => {
   it("should login user successfully with valid credentials", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ username: "test-user1", password: "password123" }); // Replace with real username/password
+      .send({ username: "test-user1", password: "password123" });
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Login successful");
     userToken = res.body.token;
@@ -49,7 +28,7 @@ describe("Follow API Tests", () => {
   it("should approve follow request by Admin", async () => {
     const respAdmin = await request(app)
       .post("/auth/login")
-      .send({ username: "test-admin1", password: "password123" }); // Replace with real username/password
+      .send({ username: "test-admin1", password: "password123" });
     expect(respAdmin.status).toBe(200);
     expect(respAdmin.body.message).toBe("Login successful");
     adminToken = respAdmin.body.token;

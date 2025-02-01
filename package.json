@@ -7,7 +7,7 @@
     "test": "jest --detectOpenHandles --env=node",
     "start": "npx nodemon server.js",
     "start:test": "cross-env NODE_ENV=test npx nodemon server.js",
-    "seed:dev": "cros-env NODE_ENV=development sequelize-cli db:seed:all --seeders-path seeders/development",
+    "seed:dev": "cross-env NODE_ENV=development sequelize-cli db:seed:all --seeders-path seeders/development",
     "seed:undo:dev": "cross-env NODE_ENV=development sequelize-cli db:seed:undo:all --seeders-path seeders/development",
     "seed:test": "cross-env NODE_ENV=test npx sequelize-cli db:seed:all --seeders-path seeders/test",
     "seed:undo:test": "cross-env NODE_ENV=test npx sequelize-cli db:seed:undo:all --seeders-path seeders/test",
