@@ -28,7 +28,7 @@ afterAll(async () => {
 describe("Video API Tests", () => {
   it("should Admin login successfully with valid credentials", async () => {
     const res = await request(app).post("/auth/login").send({
-      username: "admin1",
+      username: "test-admin1",
       password: "password123",
     });
     expect(res.status).toBe(200);
@@ -49,7 +49,7 @@ describe("Video API Tests", () => {
 
   it("should User login successfully with valid credentials", async () => {
     const res = await request(app).post("/auth/login").send({
-      username: "user1",
+      username: "test-user1",
       password: "password123",
     });
     expect(res.status).toBe(200);
@@ -65,6 +65,5 @@ describe("Video API Tests", () => {
     expect(res.status).toBe(200);
     expect(res.body.videos.length).toBe(1);
     expect(res.body.videos[0].isPublic).toBe(true);
-    console.log(res.body.videos);
   });
 });

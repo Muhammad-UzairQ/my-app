@@ -29,7 +29,7 @@ describe("Follow API Tests", () => {
   it("should login user successfully with valid credentials", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ username: "user1", password: "password123" }); // Replace with real username/password
+      .send({ username: "test-user1", password: "password123" }); // Replace with real username/password
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Login successful");
     userToken = res.body.token;
@@ -49,7 +49,7 @@ describe("Follow API Tests", () => {
   it("should approve follow request by Admin", async () => {
     const respAdmin = await request(app)
       .post("/auth/login")
-      .send({ username: "admin1", password: "password123" }); // Replace with real username/password
+      .send({ username: "test-admin1", password: "password123" }); // Replace with real username/password
     expect(respAdmin.status).toBe(200);
     expect(respAdmin.body.message).toBe("Login successful");
     adminToken = respAdmin.body.token;

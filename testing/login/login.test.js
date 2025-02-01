@@ -24,12 +24,10 @@ afterAll(async () => {
 
 describe("Login API Tests", () => {
   it("should login successfully with valid credentials", async () => {
-    const res = await request(app)
-      .post("/auth/login")
-      .send({
-        username: "muhammaduzair111111@gmail.com",
-        password: "password123",
-      }); // Replace with real username/password
+    const res = await request(app).post("/auth/login").send({
+      username: "test-admin1",
+      password: "password123",
+    });
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Login successful");
   });
@@ -45,7 +43,7 @@ describe("Login API Tests", () => {
   it("should return 400 Bad Request for missing password", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ username: "admin1" });
+      .send({ username: "test-admin1" });
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Password is required");
   });
@@ -60,7 +58,7 @@ describe("Login API Tests", () => {
   it("should return 404 not found for wrong url", async () => {
     const res = await request(app)
       .post("/auth/logins")
-      .send({ username: "admin1", password: "password123" });
+      .send({ username: "test-admin1", password: "password123" });
     expect(res.status).toBe(404);
     expect(JSON.stringify(res.body)).toBe("{}");
   });

@@ -27,7 +27,7 @@ afterAll(async () => {
 describe("Notification API Tests", () => {
   it("should login successfully with valid credentials", async () => {
     const res = await request(app).post("/auth/login").send({
-      username: "admin1",
+      username: "test-admin2",
       password: "password123",
     }); // Replace with real username/password
     expect(res.status).toBe(200);
