@@ -1,13 +1,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
+const CustomError = require("../utils/customError");
+const errorMessages = require("../constants/errorMessages");
 
-/**
- * Registers a new user.
- * @param {object} userData - Contains username, password, email, and role.
- * @returns {object} - The created user without sensitive information.
- * @throws {Error} - Throws an error if registration fails.
- */
 const registerUser = async (userData) => {
   const { username, password, email, role } = userData;
 
@@ -28,25 +24,25 @@ const registerUser = async (userData) => {
   return userWithoutPassword;
 };
 
-/**
- * Logs in a user.
- * @param {string} username - The username of the user.
- * @param {string} password - The password of the user.
- * @returns {string} - A JWT token if login is successful.
- * @throws {Error} - Throws an error if login fails.
- */
 const loginUser = async (username, password) => {
   // Find the user by username
   const user = await User.findOne({ where: { username } });
-  if (!user) {
-    throw new Error("Invalid username or password");
-  }
+  const validPassword = user?.password
+    ? await bcrypt.compare(password, user?.password)
+    : false;
 
-  // Validate the password
-  const validPassword = await bcrypt.compare(password, user.password);
-  if (!validPassword) {
-    throw new Error("Invalid username or password");
+  if (!user || !validPassword) {
+    throw new CustomError(401, errorMessages.INVALID_USERNAME_OR_PASSWORD);
   }
+  // if (!user) {
+  //   throw new CustomError(401, errorMessages.INVALID_USERNAME);
+  // }
+  // console.log("COming Here", user);
+  // Validate the password
+  // const validPassword = await bcrypt.compare(password, user.password);
+  // if (!validPassword) {
+  //   throw new CustomError(401, errorMessages.INVALID_PASSWORD);
+  // }
 
   // Generate a JWT with the user's ID and role
   const token = jwt.sign(

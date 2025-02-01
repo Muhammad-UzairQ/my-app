@@ -1,5 +1,6 @@
 module.exports = {
   ADMIN_NOT_FOUND: "Admin not found",
+  INVALID_USERNAME_OR_PASSWORD: "Invalid username or password",
   USER_NOT_FOUND: "User not found",
   ALREADY_FOLLOWING: "Already following this admin",
   NOT_FOLLOWING: "You are not following this admin",

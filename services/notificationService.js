@@ -4,7 +4,7 @@ const CustomError = require("../utils/customError");
 
 const approveNotification = async (notificationId, adminId) => {
   const notification = await Notification.findOne({
-    where: { id: notificationId, adminId },
+    where: { userId: notificationId, adminId },
   });
 
   if (!notification || notification.status !== "pending") {
@@ -26,7 +26,7 @@ const approveNotification = async (notificationId, adminId) => {
 
 const rejectNotification = async (notificationId, adminId) => {
   const notification = await Notification.findOne({
-    where: { id: notificationId, adminId },
+    where: { userId: notificationId, adminId },
   });
 
   if (!notification || notification.status !== "pending") {

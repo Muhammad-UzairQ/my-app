@@ -59,7 +59,7 @@ module.exports = {
         description: "Master CSS grid layouts in this hands-on tutorial.",
         url: "https://www.youtube.com/watch?v=cssgrid1",
         source: "instagram",
-        isPublic: true,
+        isPublic: false,
         adminId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),

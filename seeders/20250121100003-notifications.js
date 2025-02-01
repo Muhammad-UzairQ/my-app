@@ -5,6 +5,7 @@ module.exports = {
       "notifications", // The name of your Notification table
       [
         {
+          id: 30,
           userId: 8, // The ID of the user who wants to follow
           adminId: 2, // The ID of the admin being followed
           status: "pending", // Status is initially 'pending'
@@ -29,6 +30,7 @@ module.exports = {
         //   email: "admin5@example.com",
         // },
         {
+          id: 31,
           userId: 9,
           adminId: 2,
           status: "pending",
@@ -53,6 +55,7 @@ module.exports = {
         //   email: "admin5@example.com",
         // },
         {
+          id: 32,
           userId: 10,
           adminId: 2,
           status: "pending",

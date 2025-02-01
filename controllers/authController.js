@@ -1,4 +1,6 @@
+const errorMessages = require("../constants/errorMessages");
 const authService = require("../services/authService");
+const CustomError = require("../utils/customError");
 
 /**
  * Controller for registering a new user.
@@ -47,13 +49,15 @@ const registerUser = async (req, res) => {
  * Controller for logging in a user.
  */
 const loginUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { username = "", password = "" } = req.body;
 
   // Validate input fields
-  if (!username || !password) {
-    return res
-      .status(400)
-      .send({ error: "Username and password are required" });
+  if (!password) {
+    return res.status(400).send({ error: "Password is required" });
+  }
+
+  if (!username) {
+    return res.status(400).send({ error: "Username is required" });
   }
 
   try {
@@ -62,18 +66,15 @@ const loginUser = async (req, res) => {
 
     // Send the token in the response
     return res.status(200).send({ message: "Login successful", token });
-  } catch (err) {
-    // Handle login errors
-    if (err.message === "Invalid username or password") {
-      return res.status(400).send({ error: err.message });
+  } catch (error) {
+    console.log("Error logging in:", error.message);
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
     }
 
-    // General error handling
-    console.error("Error logging in user:", err);
-    return res.status(500).send({
-      error: "An error occurred while logging in",
-      details: err.message,
-    });
+    return res
+      .status(500)
+      .json({ message: errorMessages.INTERNAL_SERVER_ERROR });
   }
 };
 

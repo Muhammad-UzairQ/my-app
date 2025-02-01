@@ -5,8 +5,8 @@ module.exports = {
     // Insert sample follow relationships
     await queryInterface.bulkInsert("follows", [
       {
-        userId: 6, // Replace with a valid user ID from your users table
-        adminId: 1, // Replace with a valid admin ID from your users table
+        userId: 6, // Replace with a valid user ID
+        adminId: 1, // Replace with a valid admin ID
         createdAt: new Date(),
         updatedAt: new Date(),
       },

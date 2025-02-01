@@ -10,7 +10,7 @@ const approveNotifications = async (req, res) => {
       .status(403)
       .json({ message: "You are not authorized to approve notifications" });
   }
-
+  console.log("Creds", adminId, notificationId);
   try {
     const result = await notificationService.approveNotification(
       notificationId,
