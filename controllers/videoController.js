@@ -1,8 +1,9 @@
-const videoService = require("../services/videoService");
 const CustomError = require("../utils/customError");
+const videoService = require("../services/videoService");
 const errorMessages = require("../constants/errorMessages");
-const { publishVideoTask } = require("../queues/producers/videoProducer");
 const { BULK_INSERT_VIDEOS } = require("../queues/queueNames");
+const { publishVideoTask } = require("../queues/producers/videoProducer");
+const successMessages = require("../constants/successMessages");
 
 const saveVideo = async (req, res) => {
   try {
@@ -22,12 +23,10 @@ const saveVideo = async (req, res) => {
     });
 
     return res.status(201).json({
-      message: "Video created successfully!",
+      message: successMessages.VIDEO_SAVE_SUCCESS,
       video: newVideo,
     });
   } catch (error) {
-    console.error("Error saving video:", error.message);
-
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
@@ -47,8 +46,6 @@ const getVideos = async (req, res) => {
 
     return res.status(200).json({ videos });
   } catch (error) {
-    console.error("Error fetching videos:", error.message);
-
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
@@ -61,13 +58,12 @@ const getVideos = async (req, res) => {
 
 const bulkInsertVideos = async (req, res) => {
   try {
-    // Check if the file is uploaded
     if (!req.file) {
       throw new CustomError(400, errorMessages.NO_FILE_UPLOADED);
     }
 
-    const filePath = req.file.path; // File path for the uploaded CSV
-    const adminId = req.user.id; // Admin ID from the authenticated user
+    const filePath = req.file.path;
+    const adminId = req.user.id;
 
     // Publish the bulk insert task to RabbitMQ
     await publishVideoTask(BULK_INSERT_VIDEOS, {
@@ -76,12 +72,9 @@ const bulkInsertVideos = async (req, res) => {
     });
 
     return res.status(202).json({
-      message:
-        "File uploaded successfully. Bulk insert processing has started.",
+      message: successMessages.FILE_UPLOAD_SUCCESS,
     });
   } catch (error) {
-    console.error("Error in bulk insert controller:", error.message);
-
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }

@@ -1,7 +1,7 @@
-const { Video, Follow, User } = require("../models");
-const csv = require("csv-parser");
 const fs = require("fs");
+const csv = require("csv-parser");
 const CustomError = require("../utils/customError");
+const { Video, Follow, User } = require("../models");
 const errorMessages = require("../constants/errorMessages");
 const { publishVideoTask } = require("../queues/producers/videoProducer");
 
@@ -102,9 +102,8 @@ const parseCSVFile = async (filePath, adminId) => {
       .on("data", (row) => {
         const { title, description, url, source, isPublic } = row;
 
-        // Validate the required fields and valid sources
         if (!title || !url || !source || !validSources.includes(source)) {
-          errors.push({ row, error: "Invalid or missing required fields." });
+          errors.push({ row, error: errorMessages.INVALID_FIELDS });
           return;
         }
 
@@ -130,7 +129,6 @@ const parseCSVFile = async (filePath, adminId) => {
 const bulkInsertVideos = async ({ filePath, adminId }) => {
   const { results, errors } = await parseCSVFile(filePath, adminId);
 
-  // Perform bulk insert for valid rows
   if (results.length > 0) {
     await Video.bulkCreate(results);
   }

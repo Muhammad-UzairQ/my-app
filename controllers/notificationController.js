@@ -1,4 +1,6 @@
 const CustomError = require("../utils/customError");
+const errorMessages = require("../constants/errorMessages");
+const successMessages = require("../constants/successMessages");
 const notificationService = require("../services/notificationService");
 
 const approveNotifications = async (req, res) => {
@@ -8,9 +10,9 @@ const approveNotifications = async (req, res) => {
   if (role !== "admin") {
     return res
       .status(403)
-      .json({ message: "You are not authorized to approve notifications" });
+      .json({ message: errorMessages.UNAUTHORIZED_FOR_NOTIFICATION_APPROVAL });
   }
-  console.log("Creds", adminId, notificationId);
+
   try {
     const result = await notificationService.approveNotification(
       notificationId,
@@ -18,12 +20,12 @@ const approveNotifications = async (req, res) => {
     );
 
     if (!result) {
-      throw new CustomError("Notification not found", 404);
+      throw new CustomError(errorMessages.NOTIFICATION_NOT_FOUND, 404);
     }
 
     return res
       .status(200)
-      .json({ message: "Notification approved successfully" });
+      .json({ message: successMessages.NOTIFICATION_APPROVED_SUCCESS });
   } catch (error) {
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
@@ -41,7 +43,7 @@ const rejectNotifications = async (req, res) => {
   if (role !== "admin") {
     return res
       .status(403)
-      .json({ message: "You are not authorized to reject notifications" });
+      .json({ message: errorMessages.UNAUTHORIZED_FOR_NOTIFICATION_REJECTION });
   }
 
   try {
@@ -51,12 +53,12 @@ const rejectNotifications = async (req, res) => {
     );
 
     if (!result) {
-      throw new CustomError("Notification not found", 404);
+      throw new CustomError(errorMessages.NOTIFICATION_NOT_FOUND, 404);
     }
 
     return res
       .status(200)
-      .json({ message: "Notification rejected successfully" });
+      .json({ message: successMessages.NOTIFICATION_REJECT_SUCCESS });
   } catch (error) {
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
@@ -73,7 +75,7 @@ const getNotifications = async (req, res) => {
   if (role !== "admin") {
     return res
       .status(403)
-      .json({ message: "You are not authorized to access notifications" });
+      .json({ message: errorMessages.UNAUTHORIZED_FOR_NOTIFICATION_ACCESS });
   }
 
   try {

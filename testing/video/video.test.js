@@ -28,7 +28,7 @@ describe("Video API Tests", () => {
 
   it("should User login successfully with valid credentials", async () => {
     const res = await request(app).post("/auth/login").send({
-      username: "test-user1",
+      username: "test-user2",
       password: "password123",
     });
     expect(res.status).toBe(200);

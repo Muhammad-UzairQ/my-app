@@ -1,6 +1,7 @@
 // controllers/followController.js
-const followService = require("../services/followService");
 const CustomError = require("../utils/customError");
+const followService = require("../services/followService");
+const successMessages = require("../constants/successMessages");
 
 const followUser = async (req, res) => {
   const { adminId } = req.params;
@@ -9,12 +10,10 @@ const followUser = async (req, res) => {
   try {
     const notification = await followService.followUser(userId, adminId);
     return res.status(201).json({
-      message: "Follow request sent successfully. Await admin approval.",
+      message: successMessages.FOLLOW_REQUEST_SENT,
       notification,
     });
   } catch (error) {
-    console.error("Error in followUser:", error.message);
-
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
@@ -33,8 +32,6 @@ const unfollowUser = async (req, res) => {
     const result = await followService.unfollowUser(userId, adminId);
     return res.status(200).json({ message: result.message });
   } catch (error) {
-    console.error("Error in unfollowUser:", error.message);
-
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }

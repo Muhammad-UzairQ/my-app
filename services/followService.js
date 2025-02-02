@@ -1,7 +1,8 @@
 // services/followService.js
+const CustomError = require("../utils/customError");
 const { Follow, User, Notification } = require("../models");
 const errorMessages = require("../constants/errorMessages");
-const CustomError = require("../utils/customError");
+const successMessages = require("../constants/successMessages");
 
 /**
  * Request to follow a user (admin) by the current user.
@@ -60,7 +61,7 @@ const unfollowUser = async (userId, adminId) => {
     await notification.destroy();
   }
 
-  return { message: "Unfollowed successfully" };
+  return { message: successMessages.UNFOLLOW_SUCCESS };
 };
 
 module.exports = { followUser, unfollowUser };

@@ -1,6 +1,7 @@
-const errorMessages = require("../constants/errorMessages");
-const authService = require("../services/authService");
 const CustomError = require("../utils/customError");
+const authService = require("../services/authService");
+const errorMessages = require("../constants/errorMessages");
+const successMessages = require("../constants/successMessages");
 
 /**
  * Controller for registering a new user.
@@ -8,19 +9,16 @@ const CustomError = require("../utils/customError");
 const registerUser = async (req, res) => {
   const { username, password, email, role } = req.body;
 
-  // Validate input fields
   if (!username || !password || !email || !role) {
-    return res.status(400).send({ error: "All fields are required" });
+    return res.status(400).send({ error: errorMessages.ALL_FIELDS_REQUIRED });
   }
 
-  // Ensure role is valid
   const validRoles = ["admin", "user"];
   if (!validRoles.includes(role)) {
-    return res.status(400).send({ error: "Invalid role provided" });
+    return res.status(400).send({ error: errorMessages.INVALID_ROLE });
   }
 
   try {
-    // Call the service to register the user
     const user = await authService.registerUser({
       username,
       password,
@@ -29,15 +27,10 @@ const registerUser = async (req, res) => {
     });
     return res.status(201).send(user);
   } catch (err) {
-    // Handle unique constraint errors
     if (err.name === "SequelizeUniqueConstraintError") {
-      return res
-        .status(400)
-        .send({ error: "Username or email already exists" });
+      return res.status(400).send({ error: errorMessages.USER_ALREADY_EXISTS });
     }
 
-    // General error handling
-    console.error("Error registering user:", err);
     return res.status(500).send({
       error: "An error occurred while creating the user",
       details: err.message,
@@ -51,23 +44,21 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { username = "", password = "" } = req.body;
 
-  // Validate input fields
   if (!password) {
-    return res.status(400).send({ error: "Password is required" });
+    return res.status(400).send({ error: errorMessages.PASSWORD_REQUIRED });
   }
 
   if (!username) {
-    return res.status(400).send({ error: "Username is required" });
+    return res.status(400).send({ error: errorMessages.USERNAME_REQUIRED });
   }
 
   try {
-    // Call the service to log in the user
     const token = await authService.loginUser(username, password);
 
-    // Send the token in the response
-    return res.status(200).send({ message: "Login successful", token });
+    return res
+      .status(200)
+      .send({ message: successMessages.LOGIN_SUCCESS, token });
   } catch (error) {
-    console.log("Error logging in:", error.message);
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
